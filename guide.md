@@ -1,1 +1,0 @@
-# Chat Bot and Messenging system for Candidate and Recuriter

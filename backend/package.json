@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "eslint.config.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint .",
+    "eslint:fix": "eslint . --fix",
+    "start": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
+    "eslint-plugin-cypress": "^3.3.0",
+    "eslint-plugin-jest": "^28.6.0",
+    "express": "^4.19.2",
+    "globals": "^15.8.0",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.1",
+    "nodemon": "^3.1.4",
+    "socket.io": "^4.7.5",
+    "stylistic": "^0.2.4",
+    "typescript-eslint": "^7.16.0"
+  }
+}

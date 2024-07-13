@@ -1,0 +1,4 @@
+/backend/config.env
+/backend/node_modules
+/chatBot_frontend/node_modules
+*.env
