@@ -31,8 +31,19 @@ app.get('/', (req,res) => {
 
 io.on('connection', (socket) => {
     console.log('Yeah i am connected to socket' + socket.id );
-    console.log(socket);
+    // console.log(socket);
+    socket.on('disconnect_me',() => {
+        console.log('byee disconnecting.....');
+        socket.disconnect();
+
+    });
     socket.emit('welcome', {
         data:'hello ji aur baatoo'
+    });
+    socket.on('client_send_msg',(data) => {
+        console.log("hello hiii")
+        socket.emit('server_send_msg',{
+            server_msg : data.message_input
+        });
     });
 });
