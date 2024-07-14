@@ -1,7 +1,11 @@
 import {useNavigate } from 'react-router-dom';
 import {socket} from '../socket.js';
+import {Chat} from "./Chat.jsx";
+import {useState} from "react";
 export function Room() {
     const navigate = useNavigate ();
+    const [username, setUsername] = useState('');
+    const [roomId, setRoomId] = useState('');
     function handleSubmit(e){
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -12,20 +16,25 @@ export function Room() {
             return;
         }
         socket.emit('join_room',data);
-        navigate('/room');
+        // navigate('/room');
     }
 
     return <>
         <form onSubmit={handleSubmit}>
             <input type={"text"}
                    name={"username"}
+                   value={username}
+                   onChange={(e) => setUsername(e.target.value)}
                    placeholder={"enter your username"}
             />
             <input type={"text"}
                    name={"roomId"}
+                   value={roomId}
+                   onChange={(e) => setRoomId(e.target.value)}
                    placeholder={"enter your roomId"}
             />
             <button type={"submit"}>Join Room</button>
         </form>
+        <Chat username={username} roomId={roomId} />
     </>
 }

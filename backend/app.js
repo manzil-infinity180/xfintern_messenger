@@ -35,15 +35,22 @@ io.on('connection', (socket) => {
     socket.on('disconnect_me',() => {
         console.log('byee disconnecting.....');
         socket.disconnect();
-
     });
+
     socket.emit('welcome', {
         data:'hello ji aur baatoo'
     });
-    socket.on('client_send_msg',(data) => {
-        console.log("hello hiii")
-        socket.emit('server_send_msg',{
-            server_msg : data.message_input
+
+    // joining rooms
+    socket.on('join_room', (data) => {
+        console.log(data);
+        const roomId = data.roomId;
+        socket.join(roomId);
+        socket.to(roomId).emit('room_message',`Username: ${data.username} has been joined the room`);
+        socket.on('room_message', (data) => {
+            console.log(data);
+            io.to(roomId).emit('room_server_message',data);
         });
     });
+
 });
