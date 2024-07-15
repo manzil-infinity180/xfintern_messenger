@@ -5,13 +5,12 @@ const messageSchema= new mongoose.Schema({
         type:String,
         required:true
     },
-    reciever:{
+    receiver:{
         type:String,
         required:true
     },
-    message:{type:String,required:true},
+    message:{type:String, required:true},
     timestamp:{type:Date,default:Date.now},
-
 });
 
 const chatSchema= new mongoose.Schema({
@@ -19,12 +18,16 @@ const chatSchema= new mongoose.Schema({
         type:String,
         required:true
     },
-    reciever:{
+    receiver:{
+        type:String,
+        required:true
+    },
+    roomId:{
         type:String,
         required:true
     },
     message:[messageSchema]
 });
 
-const Chat = mongoose.model('Chat', chatSchema);
+export const Chat = mongoose.model('Chat', chatSchema);
 

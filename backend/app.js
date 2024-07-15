@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import {Server} from 'socket.io';
 import {createServer} from 'http';
-
+import {router as chatRoute} from "./router/chatRoute.js";
 
 export const server = createServer(app);
 const io = new Server(server,{
@@ -24,6 +24,7 @@ app.use(cors({
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
     credentials:true
 }));
+app.use('/', chatRoute);
 
 app.get('/', (req,res) => {
    req.send('Hello world');

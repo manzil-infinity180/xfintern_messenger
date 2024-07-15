@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {socket} from "../socket.js";
 
-export function Chat({username,roomId}) {
+export function Chat({username,roomId, color}) {
     const [message,setMessage] = useState('');
     const [chat, setChat] = useState([]);
     function handleSubmit(e) {
@@ -11,7 +11,8 @@ export function Chat({username,roomId}) {
         data = {
             ...data,
             username,
-            roomId
+            roomId,
+            color
         }
         socket.emit('client_message',data);
         socket.emit('room_message',data);
@@ -58,7 +59,7 @@ export function Chat({username,roomId}) {
                             }}
                         >{data.username}</label>
                         <h1
-                            style={{ margin:'0', padding:"0 30px", background:'yellow', opacity:'0.90'}}
+                            style={{ margin:'0', padding:"0 30px", background:data.color, opacity:'0.90'}}
                         >{data.message}</h1>
                     </div>
                 ))
