@@ -1,11 +1,16 @@
+import { config } from 'dotenv';
+config({path: './config.env'});
 import express from 'express';
 export const app = express();
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
+import session from 'express-session';
 import {Server} from 'socket.io';
 import {createServer} from 'http';
-
+import {router as chatRoute} from "./router/chatRoute.js";
+import {router as authRoute} from "./router/authRoute.js";
+import passport from 'passport'
 
 export const server = createServer(app);
 const io = new Server(server,{
@@ -17,16 +22,23 @@ const io = new Server(server,{
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+console.log(process.env.SESSION_SECRET);
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+}));
 app.use(cors({
     origin: ["http://localhost:5173/"],
     // origin: ["http://localhost:5173"],
     methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
     credentials:true
 }));
-
+app.use(passport.authenticate('session'));
+app.use('/', chatRoute);
+app.use('/auth', authRoute);
 app.get('/', (req,res) => {
-   req.send('Hello world');
+   res.send('Hello world');
 });
 
 io.on('connection', (socket) => {
