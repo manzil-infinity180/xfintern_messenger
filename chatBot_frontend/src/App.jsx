@@ -6,6 +6,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import {ErrorPage} from "./components/ErrorPage.jsx";
+import {Login} from "./components/Login.jsx";
 
 function App() {
     const [isConnected, setIsConnected] = useState(socket.connected);
@@ -19,6 +20,10 @@ function App() {
         {
             path:'*',
             element: <ErrorPage />
+        },
+        {
+            path:'/login',
+            element:<Login/>
         }
     ]);
 
