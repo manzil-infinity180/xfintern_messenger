@@ -12,12 +12,13 @@ const messageSchema= new mongoose.Schema({
 const groupSchema= new mongoose.Schema({
     name:{type:String,required:true},
     creator:{type:Schema.Types.ObjectId, ref:"User", required:true},
-    members:[{type:Schema.Types.ObjectId, ref:"User"}],
+    members:[{type:Schema.Types.ObjectId, ref:"User"},],
     groupId:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
-    message:[messageSchema]
+    message:[messageSchema],
 });
 
 export const Group = mongoose.model('Group', groupSchema);
