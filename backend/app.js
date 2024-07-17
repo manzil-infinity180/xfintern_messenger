@@ -10,6 +10,7 @@ import {Server} from 'socket.io';
 import {createServer} from 'http';
 import {router as chatRoute} from "./router/chatRoute.js";
 import {router as authRoute} from "./router/authRoute.js";
+import {router as groupRoute} from "./router/groupRoute.js";
 import passport from 'passport'
 
 export const server = createServer(app);
@@ -35,8 +36,10 @@ app.use(cors({
     credentials:true
 }));
 app.use(passport.authenticate('session'));
-app.use('/', chatRoute);
+
 app.use('/auth', authRoute);
+app.use('/', chatRoute);
+app.use('/group', groupRoute);
 app.get('/', (req,res) => {
    res.send('Hello world');
 });
