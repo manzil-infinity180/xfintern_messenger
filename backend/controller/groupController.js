@@ -72,7 +72,7 @@ export const getGroup = async (req, res) => {
     }
 }
 
-export const joinedGroup = async (req,res) => {
+export const joinedGroup = async (req, res) => {
     try{
         const loginedUser = await User.findById(req.user);
         if(!loginedUser){
@@ -198,7 +198,7 @@ export const addNewMessage = async (req, res) => {
     }
 }
 
-export const updateMessage =  async (req,res) => {
+export const updateMessage =  async (req, res) => {
     try{
         const group = await Group.findOne({
             'groupId': req.params.groupId
@@ -246,7 +246,7 @@ export const updateMessage =  async (req,res) => {
     }
 }
 
-export const deleteContent =  async (req,res) => {
+export const deleteContent =  async (req, res) => {
     try{
         const group = await Group.findOne({
             'groupId': req.params.groupId
@@ -289,5 +289,24 @@ export const deleteContent =  async (req,res) => {
             status:'failed',
             err:err.message
         });
+    }
+}
+
+export const getAllContent = async (req, res) => {
+    try{
+        const allMessage = await Message.find({
+            'receiver': req.params.groupId
+        });
+
+        res.status(200).json({
+            status:'success',
+            data: allMessage
+        })
+    }catch(err){
+        res.status(400).json({
+            status:'failed',
+            err: err.message
+        });
+
     }
 }
