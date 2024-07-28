@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const contactSchema = mongoose.Schema({
     name:{
@@ -42,6 +42,9 @@ const messageSchema= new mongoose.Schema({
     sender:{
         type:String,
         required:true
+    },
+    senderId:{
+        type: String
     },
     receiver:{
         type:String,

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose,{Schema} from "mongoose";
 
 const chatSchema= new mongoose.Schema({
     sender:{
@@ -13,7 +13,10 @@ const chatSchema= new mongoose.Schema({
         type:String,
         required:true
     },
-    message:[messageSchema]
+    content:[{
+        type: Schema.Types.ObjectId,
+        ref:"Message"
+    }]
 });
 
 export const Chat = mongoose.model('Chat', chatSchema);
