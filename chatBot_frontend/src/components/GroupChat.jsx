@@ -1,10 +1,11 @@
 import {useParams} from 'react-router-dom'
-import {getGroupDetails} from '../redux/action/groupAction';
+import {getGroupDetails, getAllGroupsMessage} from '../redux/action/groupAction';
 import { useDispatch, useSelector } from 'react-redux';
 import {getLoginUser} from '../redux/action/authAction';
 import { useEffect, useState } from 'react';
 import { Chat } from './Chat';
 import { socket } from '../socket';
+import { GroupMessage } from './GroupMessage';
 export function GroupChat() {
   const [chat, setChat] = useState([]);
     const {groupId} = useParams();
@@ -12,8 +13,10 @@ export function GroupChat() {
     useEffect(() => {
         dispatch(getGroupDetails(groupId));
         dispatch(getLoginUser());
+        dispatch(getAllGroupsMessage(groupId));
     },[dispatch]);
-    const {group} = useSelector(s => s.group);
+    const {group, allMessage} = useSelector(s => s.group);
+    console.log(allMessage);
     const {user} = useSelector(s => s.auth);
 
     useEffect(() => {
@@ -30,6 +33,11 @@ export function GroupChat() {
             <h1>{group.name}</h1> 
             <h5>{group.groupId}</h5>
            { chat && <Chat username={user.name} roomId={group.groupId} color={'blue'}/>}
+           {
+            allMessage && allMessage.map((el) => (
+              <GroupMessage data={el} key={el._id} />
+            ))
+           }
            </>
         }
         </>
