@@ -10,6 +10,7 @@ export const sendCookiesAndToken = async (user,res) =>{
     if(!user._id) throw new Error("Something went wrong!");
     const token = signToken(user._id);
     // storing the token in cookie with the name 'jwt'
+    console.log(token);
     await res.cookie("jwt",token,{
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         httpOnly: true,

@@ -14,7 +14,6 @@ export const createGroup = async (req, res) => {
             creator: req.user,
             members: [req.user]
         }
-        console.log(schema);
         const newGroup = await Group.create(schema);
 
         const user = await User.findById(req.user);
@@ -41,7 +40,6 @@ export const getGroup = async (req, res) => {
             "groupId": req.params.groupId
         }, {strictPopulate: false}).populate("members");
 
-        console.log(groups);
 
         // const groups = await Group.aggregate([{
         //     $match:{groupId : req.params.groupId}
@@ -80,24 +78,33 @@ export const joinedGroup = async (req,res) => {
             throw new Error("you are not logined");
         }
         const groupId = req.params.groupId;
-         console.log(groupId);
         const isGroupExisted = await Group.findOne({
             "groupId": groupId
         });
         if(!isGroupExisted){
             throw new Error("Group with these id not existed");
         }
+
+        // console.log("loginedUser");
+        // console.log(loginedUser);
+        // console.log("----- is group existed------");
+        // console.log(isGroupExisted);
         // we need to check it
         // is you are already a member of this group
         // is you are owner of this group
 
-        const isMember = loginedUser.joinedGroup.length !==0 && loginedUser.joinedGroup.forEach((user) => {
-                console.log(user);
-                console.log(loginedUser._id);
-            if(user.toString() === loginedUser._id.toString()){
-                return true;
-            }
-        });
+        console.log(loginedUser.joinedGroup.length);
+        function checkMember() {
+            let value = false;
+            loginedUser.joinedGroup.forEach((user) => {
+                 if(user.toString() === isGroupExisted._id.toString()){
+                    value = true;
+                 }
+        })
+        return value;
+        }
+        const isMember = loginedUser.joinedGroup.length !==0 ? checkMember() : false;
+        console.log(isMember);
 
         if((isGroupExisted.creator.equals(loginedUser._id)|| isMember)){
             return res.status(200).json({
@@ -106,10 +113,11 @@ export const joinedGroup = async (req,res) => {
             });
         }
 
+
         isGroupExisted.members.push(loginedUser._id);
         await isGroupExisted.save();
 
-        loginedUser.joinedGroup.push(loginedUser._id);
+        loginedUser.joinedGroup.push(isGroupExisted._id);
         await loginedUser.save();
 
         res.status(200).json({
@@ -125,3 +133,24 @@ export const joinedGroup = async (req,res) => {
     }
 }
 
+export const getAllGroups = async (req, res) => {
+    try{
+        console.log("hello");
+        const groups = await Group.find().populate('creator').populate('members');
+        console.log(groups);
+        if(!groups){
+            throw new Error("No groups available , refresh it!");
+        }
+
+        res.status(200).json({
+            status:"success",
+            data: groups
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status:"failed",
+            err:err.message
+        })
+    }
+}

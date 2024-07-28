@@ -7,7 +7,9 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import {ErrorPage} from "./components/ErrorPage.jsx";
 import {Login} from "./components/Login.jsx";
-
+import { User } from './components/User.jsx';
+import { GroupChat } from './components/GroupChat.jsx'
+import { AllGroups } from './components/AllGroups.jsx'
 function App() {
     const [isConnected, setIsConnected] = useState(socket.connected);
     const [message, setMessage] = useState("");
@@ -23,7 +25,19 @@ function App() {
         },
         {
             path:'/login',
-            element:<Login/>
+            element:<Login />
+        },
+        {
+            path:'/user',
+            element:<User />
+        },
+        {
+            path:'/group/:groupId',
+            element: <GroupChat />
+        },
+        {
+            path:'/groups/all',
+            element: <AllGroups />
         }
     ]);
 

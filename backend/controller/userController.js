@@ -10,15 +10,11 @@ import jwt from 'jsonwebtoken';
 export const handleSuccessLogin = async (req,res) => {
     try{
         await sendCookiesAndToken(req.user,res);
-        console.log("cookies");
-        console.log(req.cookies.jwt);
         // res.send(req.user); // contains what you have submitted to cb(null,user) ---> passportJs
-        res.status(200).json({
-            status: 'success',
-            data: req.user
-        });
+        
+        res.redirect(process.env.CLIENT_URL);
     }catch(err){
-      console.log(err);
+      res.redirect(process.env.CLIENT_URL+'login');
     }
 }
 

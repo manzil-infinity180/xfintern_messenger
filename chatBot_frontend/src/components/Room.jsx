@@ -12,15 +12,18 @@ export function Room() {
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
         console.log(data);
-        if(data.username==='' || data.roomId===''){
-            alert('Username and roomId must have value');
-            return;
-        }
+        // if(data.username==='' || data.roomId===''){
+        //     alert('Username and roomId must have value');
+        //     return;
+        // }
         socket.emit('join_room',data);
         // navigate('/room');
     }
 
     return <>
+    <button onClick={() => navigate('/login')}>Login</button>
+    <button onClick={() => navigate('/user')}>Profile</button>
+    <button onClick={() => navigate('/groups/all')}>All Groups</button>
         <form onSubmit={handleSubmit}>
             <input type={"text"}
                    name={"username"}

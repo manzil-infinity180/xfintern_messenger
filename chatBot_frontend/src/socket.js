@@ -4,6 +4,7 @@ const URL = 'http://localhost:3000';
 // getting the sever using the io fro socket.io
 export const socket = io(URL,{
     transports: ['websocket', 'polling', 'flashsocket'],
+    withCredentials: true,
     autoConnect:'false'
 });
 

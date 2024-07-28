@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-config({path: './config.env'});
+config({path: './.env'});
 import express from 'express';
 export const app = express();
 import bodyParser from 'body-parser';
@@ -14,9 +14,17 @@ import {router as groupRoute} from "./router/groupRoute.js";
 import passport from 'passport'
 
 export const server = createServer(app);
+
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    // origin: ["http://localhost:5173"],
+    methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
+    credentials:true
+}));
 const io = new Server(server,{
     cors:{
-        origin:'http://localhost:5173/',
+        origin:['http://localhost:5173'],
+        methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"], 
         credentials: true
     }
 });
@@ -29,12 +37,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
 }));
-app.use(cors({
-    origin: ["http://localhost:5173/"],
-    // origin: ["http://localhost:5173"],
-    methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
-    credentials:true
-}));
+
 app.use(passport.authenticate('session'));
 
 app.use('/auth', authRoute);
@@ -45,7 +48,7 @@ app.get('/', (req,res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('Yeah i am connected to socket' + socket.id );
+    console.log('Yeah i am connected to socket : ' + socket.id );
     // console.log(socket);
     socket.on('disconnect_me',() => {
         console.log('byee disconnecting.....');
@@ -59,13 +62,16 @@ io.on('connection', (socket) => {
     // joining rooms
     socket.on('join_room', (data) => {
         console.log(data);
-        const roomId = data.roomId;
-        socket.join(roomId);
-        socket.to(roomId).emit('room_message',`Username: ${data.username} has been joined the room`);
-        socket.on('room_message', (data) => {
-            console.log(data);
-            io.to(roomId).emit('room_server_message',data);
-        });
+        if(data){
+            const {roomId} = data;
+            socket.join(roomId);
+            socket.to(roomId).emit('room_message',`Username: ${data.username} has been joined the room`);
+            socket.on('room_message', (data) => {
+                console.log(data);
+                io.to(roomId).emit('room_server_message',data);
+            });
+        }
+        
     });
 
 });

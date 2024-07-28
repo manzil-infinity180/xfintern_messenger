@@ -8,7 +8,6 @@ export const savedChatMessage = async (req,res) => {
             receiver: req.body.receiver,
             message:req.body.current_message,
         }
-        console.log(findRoomId);
         if(findRoomId){
             findRoomId.message.push(newChat);
             findRoomId.save();
@@ -18,7 +17,6 @@ export const savedChatMessage = async (req,res) => {
                 data:findRoomId
             });
         }else{
-            console.log(req.body);
             const chat = await Chat.create(req.body);
             chat.message.push(newChat);
             chat.save();
@@ -32,7 +30,6 @@ export const savedChatMessage = async (req,res) => {
 
 
     }catch(err){
-        console.log(err);
         res.status(400).json({
             status:"error",
             err:err
