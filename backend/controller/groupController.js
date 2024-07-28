@@ -154,3 +154,31 @@ export const getAllGroups = async (req, res) => {
         })
     }
 }
+
+export const addNewMessage = async (req, res) => {
+    try{
+        const loginedUser = await User.findById(req.user);
+        const group = await Group.findOne({'groupId': req.params.groupId});
+
+        if(!group){
+            throw new Error('No group Found, Something went wrong');
+        }
+
+        const message = {
+            sender:loginedUser.name,
+            message: req.body.message,
+        }
+        group.message.push(message);
+        await group.save();
+
+        res.status(200).json({
+            status:'success'
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status:'failed',
+            err:err.message
+        })
+    }
+}
