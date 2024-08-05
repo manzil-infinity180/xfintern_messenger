@@ -18,12 +18,16 @@ const groupSlice = createSlice({
         },
         joinedGroupDetails : (state, action) => {
             state.joined = action.payload;
+        },
+        allGroupsMessage : (state, action) => {
+            state.allMessage = action.payload;
         }
     }
 });
 
 
 export const {
-    groupDetails, allGroupsDetails, joinedGroupDetails
+    groupDetails, allGroupsDetails, joinedGroupDetails,
+    allGroupsMessage
 } = groupSlice.actions;
 export default groupSlice.reducer;

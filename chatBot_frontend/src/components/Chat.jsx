@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
 import {socket} from "../socket.js";
-
+import { useDispatch, useSelector } from "react-redux";
+import { addNewMessageToDatabase } from "../redux/action/groupAction.jsx";
 export function Chat({username,roomId, color}) {
+    const dispatch = useDispatch();
     const [message,setMessage] = useState('');
     const [chat, setChat] = useState([]);
     function handleSubmit(e) {
@@ -14,10 +16,12 @@ export function Chat({username,roomId, color}) {
             roomId,
             color
         }
+        dispatch(addNewMessageToDatabase(data.message, roomId));
         socket.emit('client_message',data);
         socket.emit('room_message',data);
         console.log(data);
         setMessage("");
+
     }
     useEffect(() => {
         socket.on('room_server_message', (data) => {

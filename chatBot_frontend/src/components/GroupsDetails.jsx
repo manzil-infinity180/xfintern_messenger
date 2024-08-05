@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getLoginUser } from "../redux/action/authAction";
-import { socket } from "../socket";
 import { joinedGroup } from "../redux/action/groupAction";
 export function GroupsDetails({data}) {
     const [join, setJoin] = useState(false);
