@@ -3,7 +3,9 @@ import {createSlice} from '@reduxjs/toolkit'
 const initialGroupState = {
     isAuthenticated: false,
     loading: false,
-    group: null
+    group: null,
+    eligible: false,
+
 };
 
 const groupSlice = createSlice({
@@ -21,6 +23,10 @@ const groupSlice = createSlice({
         },
         allGroupsMessage : (state, action) => {
             state.allMessage = action.payload;
+        },
+        eligibleMessage : (state, action) => {
+            console.log(action.payload);
+            state.eligible = action.payload;
         }
     }
 });
@@ -28,6 +34,6 @@ const groupSlice = createSlice({
 
 export const {
     groupDetails, allGroupsDetails, joinedGroupDetails,
-    allGroupsMessage
+    allGroupsMessage, eligibleMessage
 } = groupSlice.actions;
 export default groupSlice.reducer;

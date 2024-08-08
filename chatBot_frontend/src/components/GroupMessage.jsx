@@ -1,10 +1,33 @@
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { deleteMessages, editNewMessage, joinedGroup } from "../redux/action/groupAction";
+
 export function GroupMessage({data}) {
-    console.log(data);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [edit, setEdit] = useState(false);
+    const [editData,setEditData] = useState("");
     function formateDate(data) {
         let date = new Date(data);
         // date.toLocaleString('en-US', { hour: 'numeric', hour12: true })
         return date;
        
+    }
+    function handleEditButton() {
+        setEditData(data.content.text);
+        setEdit(true);
+        console.log(editData);
+    }
+    function handleDeleteButton() {
+        console.log(data.receiver, data._id);
+        dispatch(deleteMessages(data.receiver,data._id));
+        console.log(data);
+    }
+    function handleUpdateMessage(e) {
+        e.preventDefault();
+        dispatch(editNewMessage(data.receiver, data._id, editData));
+        setEdit(false);
     }
     const date = formateDate(data.timestamp).toString();
     return (
@@ -21,8 +44,22 @@ export function GroupMessage({data}) {
                 padding:'10px 20px'
              }}
              >
-             <button>Edit</button>
-             <button>Delete</button>
+             <button onClick={handleEditButton} style={{
+                cursor:'pointer'
+             }}>Edit</button>
+             <button onClick={handleDeleteButton} style={{
+                cursor:'pointer'}}
+                >Delete</button>
+             {
+                edit && <>
+                <form onSubmit={handleUpdateMessage}>
+                <input type="text" value={editData} onChange={(e) => setEditData(e.target.value)}/>
+                <button type="submit" style={{
+                    cursor:'pointer'
+                }}>Update me</button>
+                </form>
+                </>
+             }
              </div>
             <label
                 style={{
