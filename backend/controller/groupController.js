@@ -207,10 +207,10 @@ export const updateMessage =  async (req, res) => {
         if(!group){
             throw new Error("Something went wrong");
         }
-
+        console.log(req.body.messageId);
         const loginedUser = await User.findById(req.user);
-        const message = await Message.findById(req.body.messageId); // messageId is nothing but _id
-
+        const message = await Message.findById({_id: req.body.messageId}); // messageId is nothing but _id
+        console.log(message);
         if(loginedUser._id.toString() !== message.senderId.toString()){
             throw new Error("You can't change other message");
         }
@@ -224,6 +224,10 @@ export const updateMessage =  async (req, res) => {
         }
 
         // only you can update text type message
+        if(message.content.type !== 'text')  {
+            throw new Error('You can only edit the message');
+        }
+
         const updatedMessage =  {
             type: message.content.type,
             text: req.body.message
@@ -273,7 +277,7 @@ export const deleteContent =  async (req, res) => {
 
         console.log(isOwner);
 
-        if(loginedUser._id.toString() !== message.senderId.toString() && !isOwner){
+        if(loginedUser._id.toString() !== message.senderId.toString() || !isOwner){
             throw new Error("You can't delete other message");
         }
 
@@ -308,5 +312,39 @@ export const getAllContent = async (req, res) => {
             err: err.message
         });
 
+    }
+}
+
+export const checkMessageOwner =  async (req, res) => {
+    try{
+        const group = await Group.findOne({
+            'groupId': req.params.groupId
+        });
+
+        if(!group){
+            throw new Error("Something went wrong");
+        }
+
+        const loginedUser = await User.findById(req.user);
+        const message = await Message.findById(req.body.messageId); // messageId is nothing but _id
+
+        if(loginedUser._id.toString() !== message.senderId.toString()){
+            throw new Error("You can't change other message");
+        }
+
+        if(message.content.type !== 'text'){
+            throw new Error("You can only change text type message");
+        }
+
+        res.status(200).json({
+            status:'success',
+            data:'You are Eligible to Edit and Delete'
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status:'failed',
+            err:err.message
+        });
     }
 }

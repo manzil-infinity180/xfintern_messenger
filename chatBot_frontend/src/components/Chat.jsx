@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {socket} from "../socket.js";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewMessageToDatabase } from "../redux/action/groupAction.jsx";
+import { addNewMessageToDatabase, checkEligibleOwner } from "../redux/action/groupAction.jsx";
 export function Chat({username,roomId, color}) {
     const dispatch = useDispatch();
     const [message,setMessage] = useState('');
@@ -30,6 +30,10 @@ export function Chat({username,roomId, color}) {
         });
         return () => socket.off('room_server_message');
     },[socket]);
+
+    // useEffect(() => {
+    //     dispatch(checkEligibleOwner())
+    // })
 
     return <>
         <h2>Chating .....</h2>
