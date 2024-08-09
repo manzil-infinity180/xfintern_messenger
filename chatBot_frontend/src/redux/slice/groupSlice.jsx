@@ -26,7 +26,7 @@ const groupSlice = createSlice({
         },
         eligibleMessage : (state, action) => {
             console.log(action.payload);
-            state.eligible = action.payload;
+            state.eligible = action.payload === "You are Eligible to Edit and Delete";
         }
     }
 });

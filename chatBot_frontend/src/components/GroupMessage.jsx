@@ -1,18 +1,32 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteMessages, editNewMessage, joinedGroup } from "../redux/action/groupAction";
+import { editAndDeleteMsg, queryClient } from '../utils/http';
+import { checkEligibleOwner, deleteMessages, editNewMessage, joinedGroup } from "../redux/action/groupAction";
+import { eligibleMessage } from "../redux/slice/groupSlice";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export function GroupMessage({data}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [edit, setEdit] = useState(false);
     const [editData,setEditData] = useState("");
+    const [check, setCheck] = useState(false);
+    const [eligible, setEligible] = useState(false);
+    // react query for edit and delete eligibility 
+    const {mutate} = useMutation({
+        mutationFn: editAndDeleteMsg,
+        onSuccess: (x) => {
+            console.log('// success //' + data.sender);
+            console.log(x);
+            setEligible(true);
+        },
+    });
     function formateDate(data) {
         let date = new Date(data);
         // date.toLocaleString('en-US', { hour: 'numeric', hour12: true })
         return date;
-       
     }
     function handleEditButton() {
         setEditData(data.content.text);
@@ -29,6 +43,27 @@ export function GroupMessage({data}) {
         dispatch(editNewMessage(data.receiver, data._id, editData));
         setEdit(false);
     }
+    const selector =  useSelector(s => s.group);
+    console.log(selector);
+    useEffect(() => {
+        const postData = {
+            messageId: data._id,
+            groupId : data.receiver
+        }
+        mutate(postData);
+    },[]);
+    // function checkEligiblity() {
+    //     dispatch(checkEligibleOwner(data.receiver, data._id));
+    //     console.log(selector);
+    //     if(selector.eligible && !check) {
+    //         setCheck(true);
+    //         dispatch(eligibleMessage(false));
+    //     }
+    //     console.log(selector);
+    // }
+    // useEffect(() => {
+    //     checkEligiblity();
+    // }, [check]);
     const date = formateDate(data.timestamp).toString();
     return (
         <div
@@ -44,12 +79,15 @@ export function GroupMessage({data}) {
                 padding:'10px 20px'
              }}
              >
-             <button onClick={handleEditButton} style={{
+             {(eligible && data) && <><button onClick={handleEditButton} style={{
                 cursor:'pointer'
              }}>Edit</button>
              <button onClick={handleDeleteButton} style={{
                 cursor:'pointer'}}
                 >Delete</button>
+                </>
+                }
+            
              {
                 edit && <>
                 <form onSubmit={handleUpdateMessage}>

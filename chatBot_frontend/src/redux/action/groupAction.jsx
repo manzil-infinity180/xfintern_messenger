@@ -190,6 +190,7 @@ export const checkEligibleOwner = (groupId, messageId) => async (dispatch) => {
             const error = new Error('An error occurred while fetching the events');
             error.code = res.status;
             error.info = await res.json();
+            dispatch(eligibleMessage(false));
             throw error
         }
         const data = await res.json();
