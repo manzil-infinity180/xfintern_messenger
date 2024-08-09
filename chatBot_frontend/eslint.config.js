@@ -45,6 +45,8 @@ module.exports = tseslint.config(
             'curly': ['error'],
             'default-param-last': ['error'],
             'no-var': ['error'],
+            'react-hooks/rules-of-hooks': 'error',
+            'react-hooks/exhaustive-deps': 'warn',
             'prefer-arrow-callback': ['error'],
             'prefer-const': ['error'],
             'prefer-template': ['error'],

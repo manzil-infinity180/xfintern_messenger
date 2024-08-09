@@ -11,6 +11,8 @@ import {Login} from "./components/Login.jsx";
 import { User } from './components/User.jsx';
 import { GroupChat } from './components/GroupChat.jsx'
 import { AllGroups } from './components/AllGroups.jsx'
+import { QueryClientContext, QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './utils/http.js'
 function App() {
     const [isConnected, setIsConnected] = useState(socket.connected);
     const [message, setMessage] = useState("");
@@ -46,6 +48,7 @@ function App() {
 
   return (
       <>
+      <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
           <Toaster
           position="top-right"
@@ -79,6 +82,7 @@ function App() {
             },
           }}
         />
+        </QueryClientProvider>
       </>
   )
 }
