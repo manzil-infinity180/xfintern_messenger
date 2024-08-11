@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { editAndDeleteMsg, queryClient } from '../utils/http';
+import { queryClient, all_Group_Messages, deleteEligibleMessage, editAndDeleteMsg, editEligibleMessage } from '../utils/http';
 import { checkEligibleOwner, deleteMessages, editNewMessage, joinedGroup } from "../redux/action/groupAction";
 import { eligibleMessage } from "../redux/slice/groupSlice";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export function GroupMessage({data}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const {groupId} = useParams();
     const [edit, setEdit] = useState(false);
     const [editData,setEditData] = useState("");
     const [check, setCheck] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
     const [eligible, setEligible] = useState(false);
     // react query for edit and delete eligibility 
     const {mutate} = useMutation({
@@ -20,10 +22,36 @@ export function GroupMessage({data}) {
         onSuccess: (x) => {
             console.log('// success //' + data.sender);
             console.log(x);
+            queryClient.invalidateQueries({
+                queryKey: ['groupMessage', groupId]
+            });
             setEligible(true);
         },
     });
-    function formateDate(data) {
+    // delete the message
+    const {mutate: deleteMutate} = useMutation({
+        mutationFn: deleteEligibleMessage,
+        onSuccess: (x) => {
+            console.log(x);
+            toast.success(x);
+            queryClient.invalidateQueries({
+                queryKey: ['groupMessage', groupId]
+            });
+        },
+    });
+    // edit the message
+    const {mutate: editMutate} = useMutation({
+        mutationFn: editEligibleMessage,
+        onSuccess: (x) => {
+            console.log(x);
+            toast.success(x);
+            queryClient.invalidateQueries({
+                queryKey: ['groupMessage', groupId]
+            });
+        },
+    });
+
+     function formateDate(data) {
         let date = new Date(data);
         // date.toLocaleString('en-US', { hour: 'numeric', hour12: true })
         return date;
@@ -35,16 +63,39 @@ export function GroupMessage({data}) {
     }
     function handleDeleteButton() {
         console.log(data.receiver, data._id);
-        dispatch(deleteMessages(data.receiver,data._id));
+        // dispatch(deleteMessages(data.receiver,data._id));
+        const postData = {
+            groupId: data.receiver,
+            messageId: data._id
+        }
+        deleteMutate(postData);
+        // refetch();
         console.log(data);
     }
     function handleUpdateMessage(e) {
         e.preventDefault();
-        dispatch(editNewMessage(data.receiver, data._id, editData));
+        // dispatch(editNewMessage(data.receiver, data._id, editData));
+        const postData = {
+            messageId: data._id,
+            groupId: data.receiver,
+            message: editData
+        }
+        editMutate(postData);
+        setIsVisible(false);
+        // refetch();
         setEdit(false);
     }
     const selector =  useSelector(s => s.group);
     console.log(selector);
+    // ----> NEW 
+
+    // function handleEditAndDelete(){
+    //     setIsVisible(true);
+    //     console.log(data);
+    //     checkEligiblity();
+    // }
+
+
     useEffect(() => {
         const postData = {
             messageId: data._id,
@@ -52,18 +103,19 @@ export function GroupMessage({data}) {
         }
         mutate(postData);
     },[]);
-    // function checkEligiblity() {
-    //     dispatch(checkEligibleOwner(data.receiver, data._id));
-    //     console.log(selector);
-    //     if(selector.eligible && !check) {
-    //         setCheck(true);
-    //         dispatch(eligibleMessage(false));
-    //     }
-    //     console.log(selector);
-    // }
-    // useEffect(() => {
-    //     checkEligiblity();
-    // }, [check]);
+
+    function checkEligiblity() {
+        dispatch(checkEligibleOwner(data.receiver, data._id));
+        console.log(selector);
+        if(selector.eligible && !check) {
+            setCheck(true);
+            dispatch(eligibleMessage(false));
+        }
+        console.log(selector);
+    }
+    useEffect(() => {
+        checkEligiblity();
+    }, [check]);
     const date = formateDate(data.timestamp).toString();
     return (
         <div
@@ -79,6 +131,13 @@ export function GroupMessage({data}) {
                 padding:'10px 20px'
              }}
              >
+                <p style={{
+                    margin:'0',
+                    fontWeight:'660',
+                    cursor:'pointer'
+                }}
+                // onClick={handleEditAndDelete}
+                >. . .</p>
              {(eligible && data) && <><button onClick={handleEditButton} style={{
                 cursor:'pointer'
              }}>Edit</button>
@@ -109,9 +168,7 @@ export function GroupMessage({data}) {
             <h3
                 style={{ margin:'0', padding:"0 30px", background:data.color, opacity:'0.90'}}
             >{data.content.text}</h3>
-             <p>{date}</p>
-            
-            
+             <p>{date}</p>    
         </div>
     );
 }

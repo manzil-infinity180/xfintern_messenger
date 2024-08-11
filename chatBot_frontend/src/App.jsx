@@ -13,6 +13,7 @@ import { GroupChat } from './components/GroupChat.jsx'
 import { AllGroups } from './components/AllGroups.jsx'
 import { QueryClientContext, QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './utils/http.js'
+import { DummyChat } from './components/DummyChat.jsx'
 function App() {
     const [isConnected, setIsConnected] = useState(socket.connected);
     const [message, setMessage] = useState("");
@@ -41,7 +42,11 @@ function App() {
         {
             path:'/groups/all',
             element: <AllGroups />
-        }
+        },
+        {
+          path:'/dummy/all/:groupId',
+          element: <DummyChat />
+      }
     ]);
 
 

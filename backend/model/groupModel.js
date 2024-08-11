@@ -17,3 +17,4 @@ const groupSchema= new mongoose.Schema({
 
 export const Group = mongoose.model('Group', groupSchema);
 
+// you can delete the content from here , ig we do not used it anywhere ( first test it then push  the code)
