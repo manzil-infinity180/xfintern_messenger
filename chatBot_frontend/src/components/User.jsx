@@ -15,7 +15,6 @@ export function User() {
           const data = {
             username: user.name,
             roomId: groupId,
-            color: 'yellow'
           }
           socket.emit('join_room', data);
           navigate(`/group/${groupId}`);

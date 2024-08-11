@@ -80,3 +80,21 @@ export async function editEligibleMessage(postData){
         const {data} = await res.json();
         return data;
 }
+
+export async function all_Group_Messages(groupId){
+    console.log("yeahhhhh");
+        const url = `${server}/group/allmessage/${groupId}`;
+        const res = await fetch(url, {
+            credentials: 'include',
+          });
+        if(!res.ok) {
+            const error = new Error('An error occurred while fetching the events');
+            error.code = res.status;
+            error.info = await res.json();
+            console.log(error.info);
+            throw error
+        }
+        const {data} = await res.json();
+        console.log(data);
+        return data;
+}
