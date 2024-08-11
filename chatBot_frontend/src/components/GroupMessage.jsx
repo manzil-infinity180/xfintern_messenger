@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { all_Group_Messages, deleteEligibleMessage, editAndDeleteMsg, editEligibleMessage } from '../utils/http';
+import { queryClient, all_Group_Messages, deleteEligibleMessage, editAndDeleteMsg, editEligibleMessage } from '../utils/http';
 import { checkEligibleOwner, deleteMessages, editNewMessage, joinedGroup } from "../redux/action/groupAction";
 import { eligibleMessage } from "../redux/slice/groupSlice";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -22,6 +22,9 @@ export function GroupMessage({data}) {
         onSuccess: (x) => {
             console.log('// success //' + data.sender);
             console.log(x);
+            queryClient.invalidateQueries({
+                queryKey: ['groupMessage', groupId]
+            });
             setEligible(true);
         },
     });
@@ -31,6 +34,9 @@ export function GroupMessage({data}) {
         onSuccess: (x) => {
             console.log(x);
             toast.success(x);
+            queryClient.invalidateQueries({
+                queryKey: ['groupMessage', groupId]
+            });
         },
     });
     // edit the message
@@ -39,6 +45,9 @@ export function GroupMessage({data}) {
         onSuccess: (x) => {
             console.log(x);
             toast.success(x);
+            queryClient.invalidateQueries({
+                queryKey: ['groupMessage', groupId]
+            });
         },
     });
 
@@ -78,18 +87,22 @@ export function GroupMessage({data}) {
     }
     const selector =  useSelector(s => s.group);
     console.log(selector);
-    function handleEditAndDelete(){
-        setIsVisible(true);
-        console.log(data);
-        checkEligiblity();
-    }
-    // useEffect(() => {
-    //     const postData = {
-    //         messageId: data._id,
-    //         groupId : data.receiver
-    //     }
-    //     mutate(postData);
-    // },[]);
+    // ----> NEW 
+
+    // function handleEditAndDelete(){
+    //     setIsVisible(true);
+    //     console.log(data);
+    //     checkEligiblity();
+    // }
+
+
+    useEffect(() => {
+        const postData = {
+            messageId: data._id,
+            groupId : data.receiver
+        }
+        mutate(postData);
+    },[]);
 
     function checkEligiblity() {
         dispatch(checkEligibleOwner(data.receiver, data._id));
@@ -100,9 +113,9 @@ export function GroupMessage({data}) {
         }
         console.log(selector);
     }
-    // useEffect(() => {
-    //     checkEligiblity();
-    // }, [check]);
+    useEffect(() => {
+        checkEligiblity();
+    }, [check]);
     const date = formateDate(data.timestamp).toString();
     return (
         <div
@@ -123,9 +136,9 @@ export function GroupMessage({data}) {
                     fontWeight:'660',
                     cursor:'pointer'
                 }}
-                onClick={handleEditAndDelete}
+                // onClick={handleEditAndDelete}
                 >. . .</p>
-             {(eligible && data && isVisible) && <><button onClick={handleEditButton} style={{
+             {(eligible && data) && <><button onClick={handleEditButton} style={{
                 cursor:'pointer'
              }}>Edit</button>
              <button onClick={handleDeleteButton} style={{
