@@ -191,6 +191,7 @@ export const checkEligibleOwner = (groupId, messageId) => async (dispatch) => {
             error.code = res.status;
             error.info = await res.json();
             dispatch(eligibleMessage(false));
+            toast.error(error.info.err);
             throw error
         }
         const data = await res.json();
