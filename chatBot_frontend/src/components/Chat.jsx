@@ -85,11 +85,12 @@ export function Chat({ username, roomId, color }) {
                 style={{
                     width: "75%",
                     padding: "10px 20px",
-                    margin: "10px 20px"
+                    margin: "10px 20px",
                 }}
                 name={"message"}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+
             />
             <button
             style={{
