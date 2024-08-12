@@ -27,6 +27,10 @@ export function GroupMessage({data}) {
             });
             setEligible(true);
         },
+        onError: (err) => {
+            console.log(err.info);
+              toast.error(err.info.err);
+        }
     });
     // delete the message
     const {mutate: deleteMutate} = useMutation({
@@ -89,20 +93,25 @@ export function GroupMessage({data}) {
     console.log(selector);
     // ----> NEW 
 
-    // function handleEditAndDelete(){
-    //     setIsVisible(true);
-    //     console.log(data);
-    //     checkEligiblity();
-    // }
-
-
-    useEffect(() => {
+    function handleEditAndDelete(){
+        setIsVisible(true);
+        console.log(data);
         const postData = {
             messageId: data._id,
-            groupId : data.receiver
+            groupId: data.receiver
         }
+        // checkEligiblity(postData);
         mutate(postData);
-    },[]);
+    }
+
+
+    // useEffect(() => {
+    //     const postData = {
+    //         messageId: data._id,
+    //         groupId : data.receiver
+    //     }
+    //     mutate(postData);
+    // },[isVisible]);
 
     function checkEligiblity() {
         dispatch(checkEligibleOwner(data.receiver, data._id));
@@ -113,9 +122,9 @@ export function GroupMessage({data}) {
         }
         console.log(selector);
     }
-    useEffect(() => {
-        checkEligiblity();
-    }, [check]);
+    // useEffect(() => {
+    //     checkEligiblity();
+    // }, [check]);
     const date = formateDate(data.timestamp).toString();
     return (
         <div
@@ -136,9 +145,9 @@ export function GroupMessage({data}) {
                     fontWeight:'660',
                     cursor:'pointer'
                 }}
-                // onClick={handleEditAndDelete}
+                onClick={handleEditAndDelete}
                 >. . .</p>
-             {(eligible && data) && <><button onClick={handleEditButton} style={{
+             {(eligible && data && isVisible) && <><button onClick={handleEditButton} style={{
                 cursor:'pointer'
              }}>Edit</button>
              <button onClick={handleDeleteButton} style={{
@@ -148,7 +157,7 @@ export function GroupMessage({data}) {
                 }
             
              {
-                edit && <>
+                (edit && isVisible) && <>
                 <form onSubmit={handleUpdateMessage}>
                 <input type="text" value={editData} onChange={(e) => setEditData(e.target.value)}/>
                 <button type="submit" style={{
