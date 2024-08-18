@@ -9,7 +9,7 @@ export function GroupsDetails({data}) {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getLoginUser());
-    },[dispatch]);
+    },[]);
     const {user} =  useSelector(s => s.auth);
     
     function handleJoinGroups(groupId) {
