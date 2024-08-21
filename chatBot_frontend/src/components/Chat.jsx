@@ -42,6 +42,9 @@ export function Chat({ username, roomId, color }) {
     // }
     // const date = formateDate().toString;
     useEffect(() => {
+        socket.emit('join_room', {roomId, username});
+    },[]);
+    useEffect(() => {
         socket.on('room_server_message', (data) => {
             setChat((x) => [...x, data]);
             console.log(chat);

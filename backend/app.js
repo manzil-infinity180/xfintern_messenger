@@ -47,13 +47,18 @@ app.get('/', (req,res) => {
    res.send('Hello world');
 });
 
+let users = {};
+let rooms = {};
+
 io.on('connection', (socket) => {
     console.log('Yeah i am connected to socket : ' + socket.id );
     // console.log(socket);
-    socket.on('disconnect_me',() => {
-        console.log('byee disconnecting.....');
-        socket.disconnect();
-    });
+    socket.on("disconnect", (params) => {
+        Object.keys(rooms).map(roomId => {
+          rooms[roomId].users = rooms[roomId].users.filter(x => x !== socket.id)
+        })
+        delete users[socket.id];
+      });
 
     socket.emit('welcome', {
         data:'hello ji aur baatoo'
@@ -61,17 +66,24 @@ io.on('connection', (socket) => {
 
     // joining rooms
     socket.on('join_room', (data) => {
-        console.log(data);
-        if(data){
-            const {roomId} = data;
-            socket.join(roomId);
-            socket.to(roomId).emit('room_message',`Username: ${data.username} has been joined the room`);
-            socket.on('room_message', (data) => {
-                console.log(data);
-                io.to(roomId).emit('room_server_message',data);
-            });
+        users[socket.id] = {
+            roomId: data.roomId
         }
-        
+        const roomId = data.roomId;
+        if(!rooms[roomId]){
+            rooms[roomId] = {
+                roomId,
+                users : []
+            }
+        }
+        rooms[roomId].users.push(socket.id);
+        socket.join(roomId);
+        socket.to(roomId).emit('room_message',`Username: ${data.username} has been joined the room`); 
     });
+
+    socket.on('room_message', (data) => {
+        const roomId = users[socket.id].roomId;
+        io.to(roomId).emit('room_server_message',data);
+    })
 
 });
