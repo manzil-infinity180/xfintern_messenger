@@ -2,9 +2,7 @@ import {useEffect, useState} from 'react'
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { socket } from './socket.js'
 import { Room } from './components/Room'
-import reactLogo from './assets/react.svg'
 import { Toaster } from "react-hot-toast"
-import viteLogo from '/vite.svg'
 import './App.css'
 import {ErrorPage} from "./components/ErrorPage.jsx";
 import {Login} from "./components/Login.jsx";
@@ -46,7 +44,7 @@ function App() {
         {
           path:'/dummy/all/:groupId',
           element: <DummyChat />
-      }
+        },
     ]);
 
 
